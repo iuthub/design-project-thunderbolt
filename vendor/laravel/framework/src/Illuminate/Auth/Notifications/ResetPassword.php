@@ -2,7 +2,9 @@
 
 namespace Illuminate\Auth\Notifications;
 
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class ResetPassword extends Notification
 {
@@ -12,6 +14,13 @@ class ResetPassword extends Notification
      * @var string
      */
     public $token;
+
+    /**
+     * The callback that should be used to build the mail message.
+     *
+     * @var \Closure|null
+     */
+    public static $toMailCallback;
 
     /**
      * Create a notification instance.
@@ -36,15 +45,33 @@ class ResetPassword extends Notification
     }
 
     /**
-     * Get the notification message.
+     * Build the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\MessageBuilder
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function message($notifiable)
+    public function toMail($notifiable)
     {
-        return $this->line('You are receiving this email because we received a password reset request for your account. Click the button below to reset your password:')
-                    ->action('Reset Password', url('password/reset', $this->token).'?email='.urlencode($notifiable->email))
-                    ->line('If you did not request a password reset, no further action is required.');
+        if (static::$toMailCallback) {
+            return call_user_func(static::$toMailCallback, $notifiable, $this->token);
+        }
+
+        return (new MailMessage)
+            ->subject(Lang::getFromJson('Reset Password Notification'))
+            ->line(Lang::getFromJson('You are receiving this email because we received a password reset request for your account.'))
+            ->action(Lang::getFromJson('Reset Password'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))
+            ->line(Lang::getFromJson('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.users.expire')]))
+            ->line(Lang::getFromJson('If you did not request a password reset, no further action is required.'));
+    }
+
+    /**
+     * Set a callback that should be used when building the notification mail message.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public static function toMailUsing($callback)
+    {
+        static::$toMailCallback = $callback;
     }
 }

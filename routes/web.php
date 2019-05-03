@@ -5,62 +5,33 @@
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| This file is where you may define all of the routes that are handled
-| by your application. Just tell Laravel the URIs it should respond
-| to using a Closure or controller method. Build something great!
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
-Route::get('/', [
-    'uses' => 'PostController@getIndex',
-    'as' => 'blog.index'
-]);
+// Route::get('/', function () {
+//     return view('view');
+// });
 
-Route::get('post/{id}', [
-    'uses' => 'PostController@getPost',
-    'as' => 'blog.post'
-]);
 
-Route::get('post/{id}/like', [
-    'uses' => 'PostController@getLikePost',
-    'as' => 'blog.post.like'
-]);
-
-Route::get('about', function () {
-    return view('other.about');
-})->name('other.about');
-
-Route::group(['prefix' => 'admin', 'middleware'=>['auth']] , function() {
-    Route::get('', [
-        'uses' => 'PostController@getAdminIndex',
-        'as' => 'admin.index'
-    ]);
-
-    Route::get('create', [
-        'uses' => 'PostController@getAdminCreate',
-        'as' => 'admin.create'
-    ]);
-
-    Route::post('create', [
-        'uses' => 'PostController@postAdminCreate',
-        'as' => 'admin.create'
-    ]);
-
-    Route::get('edit/{id}', [
-        'uses' => 'PostController@getAdminEdit',
-        'as' => 'admin.edit'
-    ]);
-
-    Route::get('delete/{id}', [
-        'uses' => 'PostController@getAdminDelete',
-        'as' => 'admin.delete'
-    ]);
-
-    Route::post('edit', [
-        'uses' => 'PostController@postAdminUpdate',
-        'as' => 'admin.update'
-    ]);
+Route::get('/', function () {
+    return view('public.landing');
 });
-Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+
+Route::get('/admin', function () {
+    return view('adminmenu.menu');
+});
+
+//Route::get('/' , 'CrudsController@index')->name('menu');
+Route::resource('crud','CrudsController');
+
+Route::resource('fcont','FeaturesController');
+
+Route::resource('mcont','MenusController');
+
+Route::resource('feedcont','FeedbacksController');
+
+Route::resource('sctcont','ScreenshotsController');

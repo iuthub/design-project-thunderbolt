@@ -11,10 +11,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ClosureCommand extends Command
 {
     /**
+     * The command callback.
+     *
+     * @var \Closure
+     */
+    protected $callback;
+
+    /**
      * Create a new command instance.
      *
      * @param  string  $signature
-     * @param  Closure  $callback
+     * @param  \Closure  $callback
      * @return void
      */
     public function __construct($signature, Closure $callback)
@@ -40,11 +47,13 @@ class ClosureCommand extends Command
 
         foreach ((new ReflectionFunction($this->callback))->getParameters() as $parameter) {
             if (isset($inputs[$parameter->name])) {
-                $parameters[] = $inputs[$parameter->name];
+                $parameters[$parameter->name] = $inputs[$parameter->name];
             }
         }
 
-        return call_user_func_array($this->callback->bindTo($this, $this), $parameters);
+        return $this->laravel->call(
+            $this->callback->bindTo($this, $this), $parameters
+        );
     }
 
     /**

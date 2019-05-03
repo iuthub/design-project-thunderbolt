@@ -4,89 +4,54 @@ namespace Illuminate\Notifications;
 
 use InvalidArgumentException;
 use Illuminate\Support\Manager;
-use Nexmo\Client as NexmoClient;
-use GuzzleHttp\Client as HttpClient;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Bus\Dispatcher as Bus;
-use Nexmo\Client\Credentials\Basic as NexmoCredentials;
 use Illuminate\Contracts\Notifications\Factory as FactoryContract;
 use Illuminate\Contracts\Notifications\Dispatcher as DispatcherContract;
 
 class ChannelManager extends Manager implements DispatcherContract, FactoryContract
 {
     /**
-     * The default channels used to deliver messages.
+     * The default channel used to deliver messages.
      *
-     * @var array
+     * @var string
      */
-    protected $defaultChannels = ['mail', 'database'];
+    protected $defaultChannel = 'mail';
+
+    /**
+     * The locale used when sending notifications.
+     *
+     * @var string|null
+     */
+    protected $locale;
 
     /**
      * Send the given notification to the given notifiable entities.
      *
-     * @param  \Illuminate\Support\Collection|array  $notifiables
+     * @param  \Illuminate\Support\Collection|array|mixed  $notifiables
      * @param  mixed  $notification
      * @return void
      */
     public function send($notifiables, $notification)
     {
-        if ($notification instanceof ShouldQueue) {
-            return $this->queueNotification($notifiables, $notification);
-        }
-
-        return $this->sendNow($notifiables, $notification);
+        return (new NotificationSender(
+            $this, $this->app->make(Bus::class), $this->app->make(Dispatcher::class), $this->locale)
+        )->send($notifiables, $notification);
     }
 
     /**
-     * Send the given notification immtediately.
+     * Send the given notification immediately.
      *
-     * @param  \Illuminate\Support\Collection|array  $notifiables
+     * @param  \Illuminate\Support\Collection|array|mixed  $notifiables
      * @param  mixed  $notification
+     * @param  array|null  $channels
      * @return void
      */
-    public function sendNow($notifiables, $notification)
+    public function sendNow($notifiables, $notification, array $channels = null)
     {
-        $notification->message();
-
-        if (! $notification->application) {
-            $notification->application(
-                $this->app['config']['app.name'],
-                $this->app['config']['app.logo']
-            );
-        }
-
-        foreach ($notifiables as $notifiable) {
-            $channels = $notification->via($notifiable);
-
-            if (empty($channels)) {
-                continue;
-            }
-
-            $this->app->make('events')->fire(
-                new Events\NotificationSent($notifiable, $notification)
-            );
-
-            foreach ($channels as $channel) {
-                $this->driver($channel)->send(collect([$notifiable]), $notification);
-            }
-        }
-    }
-
-    /**
-     * Queue the given notification instances.
-     *
-     * @param  mixed  $notification
-     * @param  array[\Illuminate\Notifcations\Channels\Notification]
-     * @return void
-     */
-    protected function queueNotification($notifiables, $notification)
-    {
-        $this->app->make(Bus::class)->dispatch(
-            (new SendQueuedNotifications($notifiables, $notification))
-                    ->onConnection($notification->connection)
-                    ->onQueue($notification->queue)
-                    ->delay($notification->delay)
-        );
+        return (new NotificationSender(
+            $this, $this->app->make(Bus::class), $this->app->make(Dispatcher::class), $this->locale)
+        )->sendNow($notifiables, $notification, $channels);
     }
 
     /**
@@ -111,6 +76,16 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     }
 
     /**
+     * Create an instance of the broadcast driver.
+     *
+     * @return \Illuminate\Notifications\Channels\BroadcastChannel
+     */
+    protected function createBroadcastDriver()
+    {
+        return $this->app->make(Channels\BroadcastChannel::class);
+    }
+
+    /**
      * Create an instance of the mail driver.
      *
      * @return \Illuminate\Notifications\Channels\MailChannel
@@ -118,32 +93,6 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     protected function createMailDriver()
     {
         return $this->app->make(Channels\MailChannel::class);
-    }
-
-    /**
-     * Create an instance of the Nexmo driver.
-     *
-     * @return \Illuminate\Notifications\Channels\NexmoSmsChannel
-     */
-    protected function createNexmoDriver()
-    {
-        return new Channels\NexmoSmsChannel(
-            new NexmoClient(new NexmoCredentials(
-                $this->app['config']['services.nexmo.key'],
-                $this->app['config']['services.nexmo.secret']
-            )),
-            $this->app['config']['services.nexmo.sms_from']
-        );
-    }
-
-    /**
-     * Create an instance of the Slack driver.
-     *
-     * @return \Illuminate\Notifications\Channels\SlackWebhookChannel
-     */
-    protected function createSlackDriver()
-    {
-        return new Channels\SlackWebhookChannel(new HttpClient);
     }
 
     /**
@@ -168,19 +117,19 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     }
 
     /**
-     * Get the default channel driver names.
+     * Get the default channel driver name.
      *
-     * @return array
+     * @return string
      */
     public function getDefaultDriver()
     {
-        return $this->defaultChannels;
+        return $this->defaultChannel;
     }
 
     /**
-     * Get the default channel driver names.
+     * Get the default channel driver name.
      *
-     * @return array
+     * @return string
      */
     public function deliversVia()
     {
@@ -188,26 +137,26 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     }
 
     /**
-     * Set the default channel driver names.
+     * Set the default channel driver name.
      *
-     * @param  array|string  $channels
+     * @param  string  $channel
      * @return void
      */
-    public function deliverVia($channels)
+    public function deliverVia($channel)
     {
-        $this->defaultChannels = (array) $channels;
+        $this->defaultChannel = $channel;
     }
 
     /**
-     * Build a new channel notification from the given object.
+     * Set the locale of notifications.
      *
-     * @param  mixed  $notifiable
-     * @param  mixed  $notification
-     * @param  array|null  $channels
-     * @return array
+     * @param  string  $locale
+     * @return $this
      */
-    public function notificationsFromInstance($notifiable, $notification, $channels = null)
+    public function locale($locale)
     {
-        return Channels\Notification::notificationsFromInstance($notifiable, $notification, $channels);
+        $this->locale = $locale;
+
+        return $this;
     }
 }

@@ -23,57 +23,21 @@ final class ArgumentMetadataFactory implements ArgumentMetadataFactoryInterface
      */
     public function createArgumentMetadata($controller)
     {
-        $arguments = array();
+        $arguments = [];
 
-        if (is_array($controller)) {
+        if (\is_array($controller)) {
             $reflection = new \ReflectionMethod($controller[0], $controller[1]);
-        } elseif (is_object($controller) && !$controller instanceof \Closure) {
+        } elseif (\is_object($controller) && !$controller instanceof \Closure) {
             $reflection = (new \ReflectionObject($controller))->getMethod('__invoke');
         } else {
             $reflection = new \ReflectionFunction($controller);
         }
 
         foreach ($reflection->getParameters() as $param) {
-            $arguments[] = new ArgumentMetadata($param->getName(), $this->getType($param), $this->isVariadic($param), $this->hasDefaultValue($param), $this->getDefaultValue($param));
+            $arguments[] = new ArgumentMetadata($param->getName(), $this->getType($param, $reflection), $param->isVariadic(), $param->isDefaultValueAvailable(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null, $param->allowsNull());
         }
 
         return $arguments;
-    }
-
-    /**
-     * Returns whether an argument is variadic.
-     *
-     * @param \ReflectionParameter $parameter
-     *
-     * @return bool
-     */
-    private function isVariadic(\ReflectionParameter $parameter)
-    {
-        return PHP_VERSION_ID >= 50600 && $parameter->isVariadic();
-    }
-
-    /**
-     * Determines whether an argument has a default value.
-     *
-     * @param \ReflectionParameter $parameter
-     *
-     * @return bool
-     */
-    private function hasDefaultValue(\ReflectionParameter $parameter)
-    {
-        return $parameter->isDefaultValueAvailable();
-    }
-
-    /**
-     * Returns a default value if available.
-     *
-     * @param \ReflectionParameter $parameter
-     *
-     * @return mixed|null
-     */
-    private function getDefaultValue(\ReflectionParameter $parameter)
-    {
-        return $this->hasDefaultValue($parameter) ? $parameter->getDefaultValue() : null;
     }
 
     /**
@@ -81,29 +45,27 @@ final class ArgumentMetadataFactory implements ArgumentMetadataFactoryInterface
      *
      * @param \ReflectionParameter $parameter
      *
-     * @return null|string
+     * @return string|null
      */
-    private function getType(\ReflectionParameter $parameter)
+    private function getType(\ReflectionParameter $parameter, \ReflectionFunctionAbstract $function)
     {
-        if (PHP_VERSION_ID >= 70000) {
-            return $parameter->hasType() ? (string) $parameter->getType() : null;
+        if (!$type = $parameter->getType()) {
+            return;
         }
+        $name = $type->getName();
+        $lcName = strtolower($name);
 
-        if ($parameter->isArray()) {
-            return 'array';
+        if ('self' !== $lcName && 'parent' !== $lcName) {
+            return $name;
         }
-
-        if ($parameter->isCallable()) {
-            return 'callable';
+        if (!$function instanceof \ReflectionMethod) {
+            return;
         }
-
-        try {
-            $refClass = $parameter->getClass();
-        } catch (\ReflectionException $e) {
-            // mandatory; extract it from the exception message
-            return str_replace(array('Class ', ' does not exist'), '', $e->getMessage());
+        if ('self' === $lcName) {
+            return $function->getDeclaringClass()->name;
         }
-
-        return $refClass ? $refClass->getName() : null;
+        if ($parent = $function->getDeclaringClass()->getParentClass()) {
+            return $parent->name;
+        }
     }
 }
