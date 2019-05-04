@@ -16,9 +16,7 @@
 // });
 
 
-Route::get('/', function () {
-    return view('public.landing');
-});
+Route::get('/', 'HomeController@showAll');
 
 
 Route::get('/admin', function () {

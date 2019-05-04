@@ -14,6 +14,7 @@
   			<h3 align="center">Laravel 5.8 Crud Tutorial</h3>
   			<br />
   			@yield('main')
+  			@yield('menu')
   		</div>
 	</body>
 </html>
