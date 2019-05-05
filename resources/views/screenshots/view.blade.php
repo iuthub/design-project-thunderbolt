@@ -12,8 +12,8 @@
      <!-- <img src="{{asset('images/'.$data->image)}}"> -->
 <!--      <img src="{{ asset('images/210757719.jpg') }}"> -->
   <div class="test">
-	<h3>First Name - {{ $data->first_name }} </h3>
-	<h3>Last Name - {{ $data->last_name }}</h3>
+	<h3>Title - {{ $data->first_name }} </h3>
+	<h3>Body - {{ $data->last_name }}</h3>
 
 	</div>
 </div>

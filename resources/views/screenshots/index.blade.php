@@ -16,8 +16,8 @@
 <table class="table table-bordered table-striped">
 	<tr>
 		<th width="10%">Image</th>
-		<th width="35%">First Name</th>
-		<th width="35%">Last Name</th>
+		<th width="35%">Title</th>
+		<th width="35%">Body</th>
 		<th width="30%">Action</th>
 	</tr>
 	@foreach($data as $row)

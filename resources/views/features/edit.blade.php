@@ -11,7 +11,7 @@
 	@csrf
 	@method('PATCH')
 	<div class="form-group">
-		<label class="col-md-4 text-right">Enter First Name</label>
+		<label class="col-md-4 text-right">Enter Title</label>
 		<div class="col-md-8">
 			<input type="text" name="first_name" value="{{ $data->first_name }}" class="form-control input-lg" />
 		</div>
@@ -20,7 +20,7 @@
 	<br />
 	<br />
 	<div class="form-group">
-		<label class="col-md-4 text-right">Enter Last Name</label>
+		<label class="col-md-4 text-right">Enter Body</label>
 		<div class="col-md-8">
 			<input type="text" name="last_name" value="{{ $data->last_name }}" class="form-control input-lg" />
 		</div>
