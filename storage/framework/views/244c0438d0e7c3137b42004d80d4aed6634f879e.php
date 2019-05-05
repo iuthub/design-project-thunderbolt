@@ -2,17 +2,20 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>This is LANDING page</title>
-	<!-- 	<meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport'/>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" /> -->
-		<link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bethany Bootstrap Theme</title>
+  <meta name="description" content="Free Bootstrap Theme by BootstrapMade.com">
+  <meta name="keywords" content="free website templates, free bootstrap themes, free template, free bootstrap, free website template">
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,300|Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/bootstrap.min.css')); ?>">
+  <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/font-awesome.min.css')); ?>">
+  <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/animate.css')); ?>">
+  <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/style.css')); ?>">
+		<!-- <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>"> -->
 	</head>
 	<body>
 		<div class="container">    
-  			<br />
-  			<h3 align="center">Landing page</h3>
-  			<br />
   			<?php echo $__env->yieldContent('main'); ?>
   		</div>
 	</body>
