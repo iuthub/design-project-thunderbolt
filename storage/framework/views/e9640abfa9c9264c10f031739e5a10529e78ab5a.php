@@ -1,6 +1,4 @@
-@extends('public.landingp')
-
-@section('main')
+<?php $__env->startSection('main'); ?>
 
 <header class="main-header" id="header">
     <div class="bg-color">
@@ -14,13 +12,13 @@
                         </button>
               <a href="index.html" class="navbar-brand">Thundebolt</a>
             </div>
-            @foreach($menus as $item)
+            <?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="collapse navbar-collapse navbar-right" id="mynavbar">
               <ul class="nav navbar-nav">
-                <li><a href="#contact">{{$item->first_name}}</a></li>
+                <li><a href="#contact"><?php echo e($item->first_name); ?></a></li>
               </ul>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
           </div>
         </div>
       </nav>
@@ -60,21 +58,21 @@
             <p class="sec-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..</p>
           </div>
         </div>
-          @foreach($features as $item)
+          <?php $__currentLoopData = $features; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="col-md-9">
           <div class="col-md-6 wow fadeInRight delay-02s">
             <div class="icon">
-             <img src="images/{{ $item->image }}">
+             <img src="images/<?php echo e($item->image); ?>">
             </div>
           
             <div class="icon-text">
-              <h3 class="txt-tl">{{$item->first_name}}</h3>
-              <p class="txt-para">{{$item->last_name}}</p>
+              <h3 class="txt-tl"><?php echo e($item->first_name); ?></h3>
+              <p class="txt-para"><?php echo e($item->last_name); ?></p>
             </div>
           </div>      
           
         </div>
-           @endforeach
+           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         
       </div>
     </div>
@@ -226,12 +224,14 @@
   </footer>
   <!---->
 
-  <script src="{{asset('js/jquery.min.js')}}"></script>
-  <script src="{{asset('js/jquery.easing.min.js')}}"></script>
-  <script src="{{asset('js/bootstrap.min.js')}}"></script>
-  <script src="{{asset('js/wow.js')}}"></script>
-  <script src="{{asset('js/custom.js')}}"></script>
-  <script src="{{asset('contactform/contactform.js')}}"></script>
+  <script src="<?php echo e(asset('js/jquery.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/jquery.easing.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/wow.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/custom.js')); ?>"></script>
+  <script src="<?php echo e(asset('contactform/contactform.js')); ?>"></script>
 
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('public.landingp', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php /* /home/khurshid/Desktop/design-project-thunderbolt/resources/views/public/landing.blade.php */ ?>
