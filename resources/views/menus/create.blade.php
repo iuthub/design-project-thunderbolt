@@ -18,7 +18,7 @@
 
 	@csrf
 	<div class="form-group">
-		<label class="col-md-4 text-right">Enter First Name</label>
+		<label class="col-md-4 text-right">Enter Title</label>
 		<div class="col-md-8">
 			<input type="text" name="first_name" class="form-control input-lg" />
 		</div>
@@ -27,7 +27,7 @@
 	<br />
 	<br />
 	<div class="form-group">
-		<label class="col-md-4 text-right">Enter Last Name</label>
+		<label class="col-md-4 text-right">Enter Body</label>
 		<div class="col-md-8">
 			<input type="text" name="last_name" class="form-control input-lg" />
 		</div>
@@ -36,7 +36,7 @@
 	<br />
 	<br />
 	<div class="form-group">
-		<label class="col-md-4 text-right">Select Profile Image</label>
+		<label class="col-md-4 text-right">Select Image</label>
 		<div class="col-md-8">
 			<input type="file" name="image" />
 		</div>
