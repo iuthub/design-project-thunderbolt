@@ -60,62 +60,22 @@
             <p class="sec-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..</p>
           </div>
         </div>
+          @foreach($features as $item)
         <div class="col-md-9">
           <div class="col-md-6 wow fadeInRight delay-02s">
             <div class="icon">
-              <i class="fa fa-paint-brush"></i>
+             <img src="images/{{ $item->image }}">
             </div>
+          
             <div class="icon-text">
-              <h3 class="txt-tl">Easy to Learn and Design</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
+              <h3 class="txt-tl">{{$item->first_name}}</h3>
+              <p class="txt-para">{{$item->last_name}}</p>
             </div>
-          </div>
-          <div class="col-md-6 wow fadeInRight delay-02s">
-            <div class="icon">
-              <i class="fa fa-cogs"></i>
-            </div>
-            <div class="icon-text">
-              <h3 class="txt-tl">Bootstrap 3.3.2</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
-            </div>
-          </div>
-          <div class="col-md-6 wow fadeInRight delay-04s">
-            <div class="icon">
-              <i class="fa fa-mobile"></i>
-            </div>
-            <div class="icon-text">
-              <h3 class="txt-tl">Responsive Design</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
-            </div>
-          </div>
-          <div class="col-md-6 wow fadeInRight delay-04s">
-            <div class="icon">
-              <i class="fa fa-desktop"></i>
-            </div>
-            <div class="icon-text">
-              <h3 class="txt-tl">No Coding, No Shortcodes</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
-            </div>
-          </div>
-          <div class="col-md-6 wow fadeInRight delay-06s">
-            <div class="icon">
-              <i class="fa fa-lightbulb-o"></i>
-            </div>
-            <div class="icon-text">
-              <h3 class="txt-tl">High Coversion</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
-            </div>
-          </div>
-          <div class="col-md-6 wow fadeInRight delay-06s">
-            <div class="icon">
-              <i class="fa fa-clock-o"></i>
-            </div>
-            <div class="icon-text">
-              <h3 class="txt-tl">Save Tons of Time</h3>
-              <p class="txt-para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula felis euismod semper. </p>
-            </div>
-          </div>
+          </div>      
+          
         </div>
+           @endforeach
+        
       </div>
     </div>
   </section>
